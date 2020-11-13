@@ -1,9 +1,8 @@
 #!/bin/bash
 
-
 # Absolute path to the directory that contains "cron.sh"
-home='/home/nvidia/remotelab/check_rsv'
-source $home/utils.sh
+abs=$PWD
+home='$abs/check_rsv'
 
 registry='uranium.snu.ac.kr:5000'
 default_image='openlab'
@@ -13,6 +12,35 @@ soon=$home/.soon
 running=$home/.running
 save_image=${home}/.image
 str=''
+
+# convert string to int
+function int(){
+	printf '%d' ${1:-} 2> /dev/null || :
+}
+
+# usage "13:30" + 1 
+# returns "13:31"
+MIN=60
+function plus_minute(){
+	HM=$1
+	min=$2
+	HM_tr=($(echo $HM | tr ':' "\n"))
+	H=$(int ${HM_tr[0]})
+	M=$(int ${HM_tr[1]})
+	if [ $M -ge $(($MIN-$min)) ] ; then
+		H=$(($H+1))
+		M=0$(($M+$min-60))
+	else
+		M=$(($M+$min))
+		if [ $M -le 9 ] ; then
+			M=0$M
+		fi
+		
+	fi
+	
+	echo "$H:$M"
+
+}
 
 # if there is a running user now, don't execute this script.
 while read line

@@ -6,7 +6,9 @@
 # the name to be saved is stored in '.image' file
 
 # Absolute path to the directory that contains "image_deploy.sh"
-home='/home/nvidia/remotelab/check_rsv'
+abs=$PWD
+home='$abs/check_rsv'
+
 name='remotelab'
 running=$home/.running
 status='nobody'
